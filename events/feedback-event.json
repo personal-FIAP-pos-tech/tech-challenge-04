@@ -1,0 +1,24 @@
+{
+  "resource": "/{proxy+}",
+  "path": "/avaliacao",
+  "httpMethod": "POST",
+  "headers": {
+    "Content-Type": "application/json",
+    "x-api-key": "local"
+  },
+  "multiValueHeaders": {},
+  "queryStringParameters": null,
+  "multiValueQueryStringParameters": null,
+  "pathParameters": {
+    "proxy": "avaliacao"
+  },
+  "stageVariables": null,
+  "requestContext": {
+    "resourcePath": "/{proxy+}",
+    "httpMethod": "POST",
+    "path": "/prod/avaliacao",
+    "stage": "prod"
+  },
+  "body": "{\"descricao\":\"A aula travou durante a explicacao principal.\",\"nota\":2}",
+  "isBase64Encoded": false
+}

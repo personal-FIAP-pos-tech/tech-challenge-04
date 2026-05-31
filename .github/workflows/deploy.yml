@@ -1,0 +1,56 @@
+name: Deploy serverless feedback platform
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Set up SAM
+        uses: aws-actions/setup-sam@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Build
+        run: mvn --batch-mode clean package
+
+      - name: Validate SAM template
+        run: sam validate
+
+      - name: SAM build
+        run: sam build
+
+      - name: SAM deploy
+        run: >
+          sam deploy
+          --stack-name "${{ vars.STACK_NAME }}"
+          --region "${{ vars.AWS_REGION }}"
+          --capabilities CAPABILITY_IAM
+          --no-confirm-changeset
+          --no-fail-on-empty-changeset
+          --parameter-overrides
+          EnvironmentName=prod
+          AdminEmail="${{ vars.ADMIN_EMAIL }}"
